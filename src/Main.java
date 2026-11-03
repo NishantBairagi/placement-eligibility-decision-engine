@@ -11,75 +11,70 @@ public class Main {
         int backlogs = scanner.nextInt();
         int graduationYear = scanner.nextInt();
 
-        Candidate candidate = new Candidate(backlogs, graduationYear, name, percentage);
+        int skillCount = scanner.nextInt();
 
-        Job job = new Job("infosys", 0, 65.0, 2026, "Java Developer");
+        String[] skills = new String[skillCount];
 
-        // boolean percentagePass = candidate.getPercentage() >= job.getMinimumPercentage();
-        // boolean backlogPass = candidate.getBacklogs() <= job.getMaximumBacklogs();
-        // boolean yearPass = candidate.getGraduationYear() == job.getRequiredGraduationYear();
-        // System.out.println("======================================================");
-        // System.out.println("PLACEMENT ELIGIBILITY RESULT");
-        // System.out.println("======================================================");
-        // System.out.println();
-        // System.out.println("Candidate: " + candidate.getName());
-        // System.out.println("Company: " + job.getCompany());
-        // System.out.println("Role: " + job.getRole());
-        // System.out.println();
-        // System.out.println("Minimum Percentage: " + job.getMinimumPercentage());
-        // System.out.println("Maximum Backlogs: " + job.getMaximumBacklogs());
-        // System.out.println("Required Graduation Year: " + job.getRequiredGraduationYear());
-        // System.out.println("Percentage: " + candidate.getPercentage());
-        // System.out.println("Backlogs: " + candidate.getBacklogs());
-        // System.out.println("Graduation Year: " + candidate.getGraduationYear());
-        boolean eligible = check(new Percentage(), candidate, job) && check(new Backlogs(), candidate, job) && check(new GraduationYear(), candidate, job);
+        for (int i = 0; i < skillCount; i++) {
+            skills[i] = scanner.next();
+        }
 
-        if (check(new Percentage(), candidate, job)) {
-            System.out.println(getName(new Percentage()) + "  :PASS");
-        } else {
-            System.out.println(getName(new Percentage()) + "  :FAIL");
+        Candidate candidate = new Candidate(backlogs, graduationYear, name, percentage, skills);
+        //String[] requiredSkills = {"Java", "SQL"};
+
+        int jobCount = scanner.nextInt();
+        Job[] jobs = new Job[jobCount];
+
+        for (int i = 0; i < jobCount; i++) {
+            String company = scanner.next();
+            String role = scanner.next();
+            double minimumPercentage = scanner.nextDouble();
+            int maximumBacklogs = scanner.nextInt();
+            int requiredGraduationYear = scanner.nextInt();
+
+            int requiredSkillsCount = scanner.nextInt();
+            String[] requiredSkills = new String[requiredSkillsCount];
+
+            for (int j = 0; j < requiredSkillsCount; j++) {
+                requiredSkills[j] = scanner.next();
+            }
+
+            jobs[i] = new Job(company, maximumBacklogs, minimumPercentage, requiredGraduationYear, role, requiredSkills);
+
         }
-        if (check(new Backlogs(), candidate, job)) {
-            System.out.println(getName(new Backlogs()) + "  :PASS");
-        } else {
-            System.out.println(getName(new Backlogs()) + "  :FAIL");
-        }
-        if (check(new GraduationYear(), candidate, job)) {
-            System.out.println(getName(new GraduationYear()) + "  :PASS");
-        } else {
-            System.out.println(getName(new GraduationYear()) + "  :FAIL");
-        }
-        // if (percentagePass) {
-        //     System.out.println("Percentage  :PASS");
-        // } else {
-        //     System.out.println("Percentage  :FAIL");
-        // }
-        // if (backlogPass) {
-        //     System.out.println("Backlogs  :PASS");
-        // } else {
-        //     System.out.println("Backlogs  :FAIL");
-        // }
-        // if (yearPass) {
-        //     System.out.println("Graduation Year  :PASS");
-        // } else {
-        //     System.out.println("Graduation Year  :FAIL");
-        // }
+
+        //Job job = new Job("infosys", 0, 65.0, 2026, "Java Developer", requiredSkills);
         System.out.println();
-        if (eligible) {
-            System.out.println("Final Result:ELIGIBLE");
-        } else {
-            System.out.println("Final Result:NOT ELIGIBLE");
+        System.out.println("AVAILABLE JOBS");
+        for (int i = 0; i < jobCount; i++) {
+            System.out.println((i + 1) + "." + jobs[i].getCompany() + " - " + jobs[i].getRole());
         }
-        //System.out.println("======================================================");
+
+        int selectJobNumber = scanner.nextInt();
+
+        Job selecteJob = jobs[selectJobNumber - 1];
+        System.out.println("======================================================");
+        System.out.println("PLACEMENT ELIGIBILITY RESULT");
+        System.out.println("======================================================");
+        System.out.println();
+        System.out.println("Candidate: " + candidate.getName());
+        System.out.println("Company: " + selecteJob.getCompany());
+        System.out.println("Role: " + selecteJob.getRole());
+        System.out.println();
+
+        EligibilityChecker checker = new EligibilityChecker();
+        boolean eligible = checker.evaluate(candidate, selecteJob);
+        System.out.println();
+
+        if (eligible) {
+            System.out.println("FINAL RESULT : ELIGIBLE");
+        } else {
+            System.out.println("FINAL RESULT : NOT ELIGIBLE");
+        }
+
+        System.out.println("======================================================");
+
         scanner.close();
-    }
 
-    public static boolean check(EligibilityRule rule, Candidate candidate, Job job) {
-        return rule.check(candidate, job);
-    }
-
-    public static String getName(EligibilityRule rule) {
-
-        return rule.getRuleName();
     }
 }
